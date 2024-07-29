@@ -6,14 +6,6 @@
 @IDE:PyCharm
 @copyright:WenQing Shang
 """
-# -*- coding: UTF-8 -*-
-"""
-@作者：shangwenqing
-@文件名:A_algorithm.py
-@时间:2024:07:28:15:36
-@IDE:PyCharm
-@copyright:WenQing Shang
-"""
 import heapq
 import random
 from PIL import Image
@@ -107,16 +99,20 @@ np.random.seed(10)
 grid = np.random.choice([0, 1], size=(rows, cols), p=[1 - p, p])
 # 保证起始点为0
 grid[0][0] = 0
+# ensure the ending is zero
 grid[rows - 1][cols - 1] = 0
 
-# 起点和终点
+grid[40:60,40:80] = 1
+# define the start and end
 start = (0, 0)
 end = (rows - 1, cols - 1)
 
-# 设置图像
+# set the image
 fig, ax = plt.subplots()
 image = np.zeros((rows, cols, 3), dtype=np.uint8)
-image[grid == 1] = [255, 0, 0]  # 红色代表障碍物
+image[grid == 1] = [255, 0, 0]  # 红色代表障碍物red is the obstacle
+
+
 image[start] = [0, 0, 255]  # 蓝色代表起点
 image[end] = [255, 255, 0]  # 黄色代表终点
 img = ax.imshow(image)
