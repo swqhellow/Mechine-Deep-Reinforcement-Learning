@@ -7,11 +7,11 @@
 @copyright:WenQing Shang
 """
 import heapq
-import random
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+
 
 class Node:
     def __init__(self, position, parent=None):
@@ -24,9 +24,11 @@ class Node:
     def __lt__(self, other):
         return self.f < other.f
 
+
 def heuristic(a, b):
     # 使用曼哈顿距离作为启发式函数
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
 
 def astar(grid, start, end):
     # 创建起始节点和目标节点
@@ -58,7 +60,8 @@ def astar(grid, start, end):
 
         # 生成当前节点的邻居
         for move in move_directions:
-            neighbor_position = (current_node.position[0] + move[0], current_node.position[1] + move[1])
+            neighbor_position = (
+                current_node.position[0] + move[0], current_node.position[1] + move[1])
 
             # 检查邻居位置是否在网格范围内
             if 0 <= neighbor_position[0] < len(grid) and 0 <= neighbor_position[1] < len(grid[0]):
@@ -75,7 +78,8 @@ def astar(grid, start, end):
 
                 # 计算邻居节点的代价
                 neighbor_node.g = current_node.g + 1
-                neighbor_node.h = heuristic(neighbor_node.position, end_node.position)
+                neighbor_node.h = heuristic(
+                    neighbor_node.position, end_node.position)
                 neighbor_node.f = neighbor_node.g + neighbor_node.h
 
                 # 如果邻居节点在开放列表中，且新的代价更低，更新代价
@@ -91,18 +95,38 @@ def astar(grid, start, end):
 
     yield None  # 无路径可达
 
+
+def rectangle(image: list, x: int, y: int, h: int, w: int):
+    """_summary_
+    Args:
+        image (list): a image which is all black
+        x (int): _description_
+        y (int): _description_
+        h (int): _description_
+        w (int): _description_
+    Returns:
+        _type_: _description_
+    """
+    image[x:x+h, y:y+w] = 1
+    return image
+
+
 rows = 100
 cols = 100
 p = 0.1  # 1出现的概率
 # 初始化示例网格（0表示可通行，1表示障碍物）
 np.random.seed(10)
-grid = np.random.choice([0, 1], size=(rows, cols), p=[1 - p, p])
+grid = np.zeros([rows,cols])
+#grid = np.random.choice([0, 1], size=(rows, cols), p=[1 - p, p])
 # 保证起始点为0
 grid[0][0] = 0
 # ensure the ending is zero
 grid[rows - 1][cols - 1] = 0
+# build a squre obstacle
+grid = rectangle(grid, 20, 20, 10, 50)
+grid = rectangle(grid, 60, 60, 10, 50)
+grid = rectangle(grid, 50, 50, 50, 5)
 
-grid[40:60,40:80] = 1
 # define the start and end
 start = (0, 0)
 end = (rows - 1, cols - 1)
@@ -118,6 +142,8 @@ image[end] = [255, 255, 0]  # 黄色代表终点
 img = ax.imshow(image)
 
 # 更新函数
+
+
 def update(path):
     if path is not None:
         for pos in path:
@@ -125,6 +151,8 @@ def update(path):
         img.set_data(image)
     return img,
 
+
 # 动画
-ani = FuncAnimation(fig, update, frames=astar(grid, start, end), repeat=False, blit=True,interval=1)
+ani = FuncAnimation(fig, update, frames=astar(
+    grid, start, end), repeat=False, blit=True, interval=1)
 plt.show()
