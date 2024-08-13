@@ -88,3 +88,33 @@ print('sorted() can sort the char or string \
 # len()
 print("len() can return the length of an object \
 \n the length of list:[1,2,4,5,3] is {}".format(len([1,2,4,5,3])))
+import cv2
+import numpy as np
+import math
+
+# 创建一个空白图像
+image = np.zeros((500, 500, 3), dtype='uint8')
+
+# 定义五角星的中心和半径
+center = (250, 250)
+radius = 100
+
+# 计算五角星的顶点
+points = []
+for i in range(5):
+    angle = i * 144 * math.pi / 180  # 144度是五角星每个顶点之间的角度
+    x = int(center[0] + radius * math.cos(angle))
+    y = int(center[1] - radius * math.sin(angle))
+    points.append((x, y))
+
+# 将顶点列表转换为 NumPy 数组
+points = np.array(points, np.int32)
+points = points.reshape((-1, 1, 2))
+
+# 使用 cv2.fillPoly 函数绘制实心五角星
+cv2.fillPoly(image, [points], color=(255, 255, 255))
+
+# 显示图像
+cv2.imshow('Solid Star', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
